@@ -13,4 +13,4 @@ I am an impact-driven Master of Public Health (MPH) Graduate specializing in adv
 
 ### 🌐 Long-Term Mission
 * Leveraging computational data analytics to optimize health equity frameworks, workforce safety, and consumer health safety operations globally.
-
+ 
