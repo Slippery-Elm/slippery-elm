@@ -1,16 +1,16 @@
-## Hi there 👋
+# 👤 Welcome to My Portfolio!
 
-<!--
-**Slippery-Elm/slippery-elm** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+I am an impact-driven Master of Public Health (MPH) Graduate specializing in advanced data curation, statistical database integrity, and epidemiological trend tracking. My work bridges the gap between secure health architectures and actionable, data-driven programmatic insights.
 
-Here are some ideas to get you started:
+### 🔭 Current Analytics Focus
+* Serving as a Qualitative & Quantitative Research Data Analytics Collaborator on a collaborative UAB/VA veteran suicide prevention initiative.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### 📊 Technical Core
+* Advanced dataset manipulation, database auditing, and translating complex real-world data (RWD) into executive-ready visualizations.
+
+### ⚙️ Environments & Tools
+* REDCap, SQL (Data Querying), NVivo, Tableau, and SPSS. Currently expanding my pipeline architecture capabilities in Python, R, and SAS.
+
+### 🌐 Long-Term Mission
+* Leveraging computational data analytics to optimize health equity frameworks, workforce safety, and consumer health safety operations globally.
+
