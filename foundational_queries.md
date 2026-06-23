@@ -5,7 +5,7 @@
 **Data Source:** Mock BRFSS Chronic Condition Data  
 
 ### Objectives
-Identify regional wellness zones by isolating patients who are sedentary but currently free of diagnosed cardiovascular disease. This allows healthcare administrators to implement preemptive preventative health interventions.
+Identify regional wellness zones by isolating patients who are sedentary but currently free of diagnosed cardiovascular disease. This allows healthcare administrators to implement preemptive preventive health interventions.
 
 ### Optimized SQL Execution Script
 ```sql
