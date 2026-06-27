@@ -111,7 +111,7 @@ Metadata Translation Keys Applied:
 * Exercises Past 30 Days: 1 = Active | 2 = Sedentary | 9 = Unknown
 * Has Cardiovascular Disease: 1 = Has Heart Disease | 2 = No Heart Disease
 
-## [Click here to view the live interactive dashboard on Tableau Public](https://public.tableau.com/app/profile/rachel.asante/viz/Birmingham_Chronic_Disease_Population_Dashboard/Dashboard1?publish=yes)
+### [** Click here to view the live interactive dashboard on Tableau Public **](https://public.tableau.com/app/profile/rachel.asante/viz/Birmingham_Chronic_Disease_Population_Dashboard/Dashboard1?publish=yes)
 
 ---
 
