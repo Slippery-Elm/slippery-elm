@@ -118,3 +118,89 @@ HAVING COUNT(*) > 1;
 - Every expression in a `SELECT` list — including multi-line `CASE` blocks — needs a comma after it, just like any other item in the list (except the last one before `FROM`).
 - `WHERE` filters rows before grouping; `HAVING` filters groups after aggregation. Aggregate functions like `COUNT()` don't exist yet at the row level, so `HAVING` is required to filter on them.
 - A `LEFT JOIN` can produce `NULL` values in columns from the right-hand table — always plan for that when writing `CASE WHEN` logic downstream.
+
+---
+
+# Public Health SQL Portfolio: Flu Outreach Tracking- Full DDL → DML → DQL Lifecycle (August 13, 2026)
+
+## Overview
+
+This piece demonstrates the full lifecycle of a database table: **building it, populating it, and querying it.** It models a simple flu vaccination outreach log for a clinic — the kind of tracking system used to monitor whether patients contacted during an outreach campaign actually got vaccinated.
+
+The three stages map to the three core SQL sublanguages:
+
+| Stage | SQL Type | Purpose |
+|---|---|---|
+| 1. Build the table | **DDL** (Data Definition Language) | Define the table's structure and column types |
+| 2. Add the data | **DML** (Data Manipulation Language) | Insert actual outreach records into the table |
+| 3. Ask a question | **DQL** (Data Query Language) | Summarize vaccination outcomes from the data |
+
+## Stage 1 — DDL: Build the Table
+
+```sql
+-- Create a new table to track flu outreach contacts.
+-- vaccinated is stored as VARCHAR(3) since it only ever holds
+-- 'Yes' or 'No' -- sized intentionally rather than oversized.
+CREATE TABLE flu_outreach (
+    contact_id INT,
+    patient_last_name VARCHAR(50),
+    contact_date DATE,
+    vaccinated VARCHAR(3)
+);
+```
+
+## Stage 2 — DML: Populate the Table
+
+```sql
+-- Insert outreach records. Columns are explicitly named to avoid
+-- any ambiguity about which value maps to which column.
+-- Text and date values are wrapped in single quotes; numbers are not.
+INSERT INTO flu_outreach (contact_id, patient_last_name, contact_date, vaccinated)
+VALUES 
+    (101, 'James',      '2024-04-05', 'No'),
+    (102, 'Tagoe',       '2024-04-29', 'Yes'),
+    (103, 'Franchetti',  '2024-05-13', 'Yes'),
+    (104, 'Zhang',       '2024-05-20', 'No');
+```
+
+Resulting table:
+
+| contact_id | patient_last_name | contact_date | vaccinated |
+|---|---|---|---|
+| 101 | James | 2024-04-05 | No |
+| 102 | Tagoe | 2024-04-29 | Yes |
+| 103 | Franchetti | 2024-05-13 | Yes |
+| 104 | Zhang | 2024-05-20 | No |
+
+## Stage 3 — DQL: Query the Data
+
+```sql
+-- Count how many outreach contacts fall into each vaccination
+-- status. No WHERE clause is used here on purpose -- filtering
+-- to one status before grouping would defeat the point of
+-- comparing Yes vs. No side by side.
+SELECT vaccinated, COUNT(*) AS total_vaccinations
+FROM flu_outreach
+GROUP BY vaccinated;
+```
+
+## Result
+
+| vaccinated | total_vaccinations |
+|---|---|
+| No | 2 |
+| Yes | 2 |
+
+## Concepts Demonstrated
+
+| Concept | Stage | Purpose |
+|---|---|---|
+| `CREATE TABLE` | DDL | Defines the table and its column data types |
+| `INSERT INTO ... VALUES` | DML | Adds multiple rows of real data in one statement |
+| `GROUP BY` + `COUNT(*)` | DQL | Summarizes outcomes across the inserted data |
+
+## Notes / Lessons Learned
+
+- DDL, DML, and DQL aren't separate skills — they're three stages of the same lifecycle: **build the container, fill it, then ask questions of it.**
+- `WHERE` filters individual rows; leaving it out here was intentional, since the goal was a side-by-side comparison across *all* categories, not a subset.
+- Sizing a column's data type intentionally (`VARCHAR(3)` for a Yes/No field) is good practice — it documents the expected range of values right in the schema.
