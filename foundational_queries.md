@@ -204,3 +204,151 @@ GROUP BY vaccinated;
 - DDL, DML, and DQL aren't separate skills — they're three stages of the same lifecycle: **build the container, fill it, then ask questions of it.**
 - `WHERE` filters individual rows; leaving it out here was intentional, since the goal was a side-by-side comparison across *all* categories, not a subset.
 - Sizing a column's data type intentionally (`VARCHAR(3)` for a Yes/No field) is good practice — it documents the expected range of values right in the schema.
+
+---
+
+# CPM Performance Dashboard Data Prep Using Python/pandas/numpy (August 14,2026)
+
+## Overview
+
+This project simulates a data-prep and reporting workflow for a psychiatric care setting, modeled on the kind of work outlined in a real Performance & Data Analyst job description: monitoring KPIs like length of stay and readmissions, validating data integrity, and communicating findings to leadership.
+
+It walks through the full analyst workflow: **load data → explore it → check data integrity → create calculated fields → summarize KPIs → write up findings.**
+
+Tools used: `pandas`, `numpy`
+
+## Step 1: Load the Dataset
+
+```python
+import pandas as pd
+import numpy as np
+
+data = {
+    'patient_id': [301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315],
+    'unit': ['Adult Psych', 'Adolescent Psych', 'Geriatric Psych', 'Geriatric Psych', 'Adult Psych',
+             'Adolescent Psych', 'Adolescent Psych', 'Geriatric Psych', 'Geriatric Psych', 'Adult Psych',
+             'Adolescent Psych', 'Adolescent Psych', 'Geriatric Psych', 'Geriatric Psych', 'Adult Psych'],
+    'length_of_stay_days': [7, 3, 12, 5, 9, 2, 6, np.nan, 14, 8, 1, 11, 13, 10, 4],
+    'readmitted_status': ['Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'No', 'Yes', 'No', 'Yes',
+                           'Yes', 'Yes', 'No', 'No', 'Yes'],
+    'discharge_disposition': ['Home', 'AMA', 'Home', 'Transfer', 'Transfer', 'Home', 'Home', 'AMA',
+                               'AMA', 'Home', 'Transfer', 'AMA', 'Transfer', 'Home', 'Home']
+}
+
+df = pd.DataFrame(data)
+df
+```
+
+## Step 2: Explore the Data + Check Data Integrity
+
+```python
+df.head()
+df.info()
+df.describe()
+```
+
+```python
+# Check for missing values
+df.isnull().sum()
+```
+
+`length_of_stay_days` came back with 1 missing value (patient 308). Rather than dropping that patient's record and losing their other data, the gap is filled with the column's average — a defensible, transparent way to handle a single missing data point in a small sample. Therefore, the missing value (np.nan) is 7.5.
+
+```python
+# Fill the missing value with the column mean
+df['length_of_stay_days'] = df['length_of_stay_days'].fillna(df['length_of_stay_days'].mean())
+
+# Confirm the gap is resolved
+df.isnull().sum()
+```
+
+## Step 3: Create Calculated Columns
+
+```python
+# Bucket length of stay into categories
+def categorize_stay(days):
+    if days <= 3:
+        return 'Short Stay'
+    elif 4 <= days <= 8:
+        return 'Moderate Stay'
+    else:
+        return 'Extended Stay'
+
+df['stay_category'] = df['length_of_stay_days'].apply(categorize_stay)
+```
+
+```python
+# Flag readmission risk
+def readmission_flag(status):
+    if status == 'Yes':
+        return 'Risk'
+    else:
+        return 'Low Risk'
+
+df['readmission_risk'] = df['readmitted_status'].apply(readmission_flag)
+
+df
+```
+
+## Step 4: KPI Summaries
+
+
+This metric counts the total volume of patient readmissions across the entire dataset. It establishes the overall baseline split between readmitted and non-readmitted individuals.
+
+```python
+# Overall readmission counts
+df['readmitted_status'].value_counts()
+```
+| readmitted_status | count |
+|---|---|
+| Yes | 8 |
+| No | 7 |
+
+
+This aggregation calculates the mean length of stay (in days) grouped by specific psychiatric units. It highlights how hospitalization windows scale from younger cohorts to geriatric care.
+
+```python
+# Average length of stay by unit
+df.groupby('unit')['length_of_stay_days'].mean()
+```
+| unit | avg length_of_stay_days |
+|---|---|
+| Adolescent Psych | 4.60 |
+| Adult Psych | 7.00 |
+| Geriatric Psych | 10.25 |
+
+
+This segment breaks down patient risk stratifications within each specific care unit. It uses a secondary grouping to isolate high-risk versus low-risk volumes.
+
+```python
+# Readmission risk breakdown by unit
+df.groupby('unit')['readmission_risk'].value_counts()
+```
+| unit | readmission_risk | count |
+|---|---|---|
+| Adolescent Psych | Risk | 3 |
+| Adolescent Psych | Low Risk | 2 |
+| Adult Psych | Risk | 3 |
+| Adult Psych | Low Risk | 1 |
+| Geriatric Psych | Low Risk | 4 |
+| Geriatric Psych | Risk | 2 |
+
+## Step 5: Summary of Findings
+
+Across the sample of 15 patients, readmission rates were nearly evenly split, with 8 patients flagged as readmitted and 7 not. Average length of stay varied notably by unit: Geriatric Psych patients stayed longest (10.25 days on average), compared to Adult Psych (7.0 days) and Adolescent Psych (4.6 days). Notably, this pattern did not carry over to readmission risk — Geriatric Psych patients had the lowest proportion flagged as high-risk, while Adolescent and Adult Psych patients skewed higher-risk despite shorter average stays. This inverse relationship is worth flagging for further investigation, since it runs counter to the assumption that longer stays would correlate with higher readmission risk.
+
+## Concepts Demonstrated
+
+| Concept | pandas Tool | Purpose |
+|---|---|---|
+| Loading data | `pd.DataFrame()` | Building a table structure in memory |
+| Exploring data | `.head()`, `.info()`, `.describe()` | Sanity-checking a new dataset before analysis |
+| Data integrity | `.isnull().sum()`, `.fillna()` | Identifying and handling missing values |
+| Calculated fields | Custom function + `.apply()` | Bucketing/flagging values, the pandas equivalent of SQL's `CASE WHEN` |
+| KPI summaries | `.value_counts()`, `.groupby()` | Summarizing counts and averages by category, the pandas equivalent of `GROUP BY` |
+
+## Notes / Lessons Learned
+
+- Notebooks don't enforce top-to-bottom execution order — cells run in whatever order they're clicked, which can silently overwrite a variable like `df` with stale data from an earlier cell. `Runtime → Restart session` followed by `Runtime → Run all` is the reliable way to confirm a notebook actually runs cleanly start to finish, which matters both for debugging and for reproducibility when someone else opens the notebook.
+- Leftover troubleshooting/test cells (built to isolate one piece of logic) should be deleted once they've served their purpose — otherwise they can silently re-run and clobber real work further down the notebook.
+- `.fillna()` and similar data-cleaning decisions are analytical choices worth documenting, not just technical steps — particularly relevant in a regulatory/compliance-facing role where data integrity is closely scrutinized.
