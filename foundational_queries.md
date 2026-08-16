@@ -207,7 +207,7 @@ GROUP BY vaccinated;
 
 ---
 
-# CPM Performance Dashboard Data Prep Using Python/pandas/numpy (August 14,2026)
+# CPM Performance Dashboard Data Prep Using Python/pandas/numpy (August 14, 2026)
 
 ## Overview
 
