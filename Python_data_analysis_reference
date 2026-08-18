@@ -33,7 +33,7 @@ df = pd.read_csv('filename.csv')
 
 ### pandas — building a DataFrame manually (for practice/mock data)
 ```python
-data = {'col1': [1, 2, 3], 'col2': ['a', 'b', 'c']}
+data = {'col1':, 'col2': ['a', 'b', 'c']}
 df = pd.DataFrame(data)
 ```
 
@@ -177,7 +177,7 @@ import pandas as pd
 import numpy as np
 
 data = {
-    'patient_id': [1, 2, 3, 4, 5],
+    'patient_id':,
     'condition': ['Asthma', 'Diabetes', 'Asthma', 'Diabetes', 'Diabetes'],
     'age': [24, 45, np.nan, 61, 38]
 }
@@ -186,7 +186,7 @@ df = pd.DataFrame(data)
 
 ### Example A — Filtering (pandas, using NumPy's `nan` marker)
 ```python
-# Find rows where age data exists (not missing) 
+# Find rows where age data exists (not missing)
 df[df['age'].notnull()]
 ```
 
@@ -211,4 +211,4 @@ ages = np.array([24, 45, 61, 38])
 np.mean(ages)     # same math as df['age'].mean(), just on a raw array instead of a DataFrame column
 np.std(ages)      # standard deviation
 ```
-In practice, most day-to-day work stays inside pandas methods (`.mean()`, `.std()`, etc.) directly on a DataFrame or Series — NumPy is usually working quietly underneath, rather than being called directly, except for things like `np.nan` and `np.where()`.
+In practice, most day-to-day work stays inside pandas methods (`.mean()`, `.std()`, etc.) directly on a DataFrame or Series — NumPy is usually working quietly underneath, rather than being called directly.
